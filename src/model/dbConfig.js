@@ -17,21 +17,16 @@ const showVacinasCount = async () => {
 const cadastrarPaciente = async (nome, dataNascimento) => {
     const result = await pool.query('INSERT INTO PACIENTE (id_paciente, nome, Data_nascimento) VALUES ((SELECT COALESCE(MAX(id_paciente), 0) + 1 FROM PACIENTE), $1, $2) RETURNING *', [nome, dataNascimento]);
 }
-//Consulta Paciente
-const consultaPaciente = async () => {
-    const result = await pool.query('SELECT * from PACIENTE');
-    console.log(result.rows);
-}
 //Atualiza Paceiente 
 const atualizarPaciente = async (idPaciente, novoNome, novaDataNascimento) => {
     const result = await pool.query('UPDATE PACIENTE SET nome = $2, Data_nascimento = $3 WHERE id_paciente = $1 RETURNING *', [idPaciente, novoNome, novaDataNascimento]);
 }
-
 //Consulta paciente por ID
-const pesquisaPaciente = async () => {
-    const result = await pool.query('SELECT * from PACIENTE');
+const pesquisaPacienteId = async (idPaciente) => {
+    const result = await pool.query('SELECT * from PACIENTE WHERE id_paciente = $1', [idPaciente]);
     console.log(result.rows);
 }
+
 
 //Cadastrar rede
 const cadastrarIdRede = async (tipoRede) => {
@@ -43,17 +38,12 @@ const consultaRede = async () => {
     console.log(result.rows);
 }
 
-//cadastrarPaciente("Victor", "1988-6-6")
-//cadastrarIdRede('Rede Maluca')
-//consultaRede()
 
-//consultaPaciente() //Mudar nome da função
 
-//atualizarPaciente(53, 'Victor novo', '09/12/2023')
-consultaPaciente()
 module.exports = {
     cadastrarPaciente,
-    atualizarPaciente
+    atualizarPaciente,
+    pesquisaPacienteId
 
 }
 
