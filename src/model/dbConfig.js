@@ -27,7 +27,6 @@ const pesquisaPacienteId = async (idPaciente) => {
     console.log(result.rows);
 }
 
-
 //Cadastrar rede
 const cadastrarIdRede = async (tipoRede) => {
     const result = await pool.query('INSERT INTO REDE (Id_rede, Tipo_rede) VALUES ((SELECT COALESCE(MAX(Id_rede), 0) + 1 FROM REDE), $1) RETURNING *', [tipoRede]);
@@ -38,7 +37,33 @@ const consultaRede = async () => {
     console.log(result.rows);
 }
 
+//Vacinas
+const inseriVacinaAplicada = async (idPaciente, Idvacina, dataAplicacao) => {
+    const result = await pool.query('INSERT INTO VACINAAPLICADA (id_paciente, Id_vacina, Data_aplicacao) VALUES ($1, $2, $3) RETURNING *', [idPaciente, Idvacina, dataAplicacao]);
+    return result
+}
+//Pesquisa vacinas por
+const pesquisaVacinaAplicada = async (idPaciente, Idvacina) => {
+    const result = await pool.query('SELECT * FROM VACINAAPLICADA WHERE id_paciente = $1 AND id_vacina = $2 ', [idPaciente, Idvacina]);
+    console.log(result.rows);
+}
 
+//Consulta em mais de uam Tabela, para retornar dados especificos
+const consultaVacinaPersonalizada = async () => {
+    const result = await pool.query('SELECT * FROM VACINA, PERIODOAPLICACAOMES, PERIODOAPLICACAOANO, REDE');
+    console.log(result.rows);
+}
+
+//Consulta vacina Por idade
+const consultaVacinaPoridade = async () => {
+    const result = await pool.query('SELECT * FROM VACINA, VACINAAPLICADA, REDE');
+    console.log(result.rows);
+}
+
+
+
+//pesquisaVacinaAplicada(4, 19)
+consultaVacinaPersonalizada()
 
 module.exports = {
     cadastrarPaciente,
