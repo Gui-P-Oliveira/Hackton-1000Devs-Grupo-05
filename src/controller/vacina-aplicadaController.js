@@ -1,4 +1,4 @@
-const {excluiVacinaAplicada, pesquisaVacinaAplicada, insereVacinaAplicada} = require('../model/dbConfig.js')
+const {excluiVacinaAplicada, pesquisaVacinaAplicada, inseriVacinaAplicada} = require('../model/dbConfig.js')
 
 //Cadastro de vacina aplicada de uma determinada pessoa
 const cadastraVacinasAplicada = async (req, res) => {
@@ -9,7 +9,7 @@ const cadastraVacinasAplicada = async (req, res) => {
         
     }
 
-    const vacinaAplicada = await insereVacinaAplicada(idPaciente, idVacina, dataAplicacao)
+    const vacinaAplicada = await inseriVacinaAplicada(idPaciente, idVacina, dataAplicacao)
 
     res.status(201).json({
         message: 'Vacina cadastrada com sucesso',
@@ -38,7 +38,7 @@ const deletaVacinasAplicadaId = async (req, res) => {
     res.status(201).json({
         message: 'Vacina excluída com sucesso',
         data: excluiVacinasAplicada.rows
-
+    })
 }
 
 module.exports = {deletaVacinasAplicadaId, pesquisaVacinasAplicada, cadastraVacinasAplicada}
