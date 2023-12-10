@@ -9,10 +9,7 @@ const pool = new Pool({
     ssl: true
 });
 //Buscar as vascians
-const showVacinasCount = async () => {
-    const result = await pool.query('SELECT * from VACINA');
-    console.log(result.rows);
-}
+
 //Cadastra Pacientes
 const cadastrarPaciente = async (nome, dataNascimento) => {
     const result = await pool.query('INSERT INTO PACIENTE (id_paciente, nome, Data_nascimento) VALUES ((SELECT COALESCE(MAX(id_paciente), 0) + 1 FROM PACIENTE), $1, $2) RETURNING *', [nome, dataNascimento]);
@@ -45,6 +42,45 @@ const consultaRede = async () => {
     console.log(result.rows);
 }
 
+const showVacinas = async () => {
+    const result = await pool.query('SELECT * from VACINA');
+    console.log(result.rows);
+}
+const showVacinaAplicada = async () => {
+    const result = await pool.query('SELECT * from VACINAAPLICADA');
+    console.log(result.rows);
+}
+
+const inseriVacinaAplicada = async (idPaciente, Idvacina, dataAplicacao) => {    
+    const result = await pool.query('INSERT INTO VACINAAPLICADA (id_paciente, Id_vacina, Data_aplicacao) VALUES ($1, $2, $3) RETURNING *', [idPaciente, Idvacina, dataAplicacao]);
+    return result
+}
+
+const excluiVacinaAplicada = async (idPaciente, Idvacina) => {    
+    const result = await pool.query
+        ('DELETE FROM VACINAAPLICADA WHERE id_paciente = $1 AND id_vacina = $2', 
+            [idPaciente, Idvacina]);
+    return result
+}
+
+const pesquisaVacinaAplicada = async (idPaciente, Idvacina) => {
+    const result = await pool.query('SELECT * FROM VACINAAPLICADA WHERE id_paciente = $1 AND id_vacina = $2 ', [idPaciente, Idvacina]);
+    return result
+}
+
+
+
+
+
+
+excluiVacinaAplicada(1, 3)
+// inseriVacinaAplicada(2, 33, "1999-10-19")
+showVacinaAplicada()
+
+
+// showVacinas()
+// VacinaAplicada()
+
 //cadastrarPaciente("Victor", "1988-6-6")
 //cadastrarIdRede('Rede Maluca')
 //consultaRede()
@@ -57,7 +93,10 @@ module.exports = {
     cadastrarPaciente,
     atualizarPaciente,
     consultaPacientes,
-    pesquisaPaciente
+    pesquisaPaciente,
+    inseriVacinaAplicada,
+    excluiVacinaAplicada,
+    pesquisaVacinaAplicada
 
 }
 
