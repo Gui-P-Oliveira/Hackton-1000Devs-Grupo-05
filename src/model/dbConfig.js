@@ -32,25 +32,6 @@ const pesquisaPaciente = async (id_paciente) => {
     return result
 }
 
-//Cadastrar rede
-const cadastrarIdRede = async (tipoRede) => {
-    const result = await pool.query('INSERT INTO REDE (Id_rede, Tipo_rede) VALUES ((SELECT COALESCE(MAX(Id_rede), 0) + 1 FROM REDE), $1) RETURNING *', [tipoRede]);
-}
-//Consulta rede
-const consultaRede = async () => {
-    const result = await pool.query('SELECT * from REDE');
-    console.log(result.rows);
-}
-
-const showVacinas = async () => {
-    const result = await pool.query('SELECT * from VACINA');
-    console.log(result.rows);
-}
-const showVacinaAplicada = async () => {
-    const result = await pool.query('SELECT * from VACINAAPLICADA');
-    console.log(result.rows);
-}
-
 const inseriVacinaAplicada = async (idPaciente, Idvacina, dataAplicacao) => {    
     const result = await pool.query('INSERT INTO VACINAAPLICADA (id_paciente, Id_vacina, Data_aplicacao) VALUES ($1, $2, $3) RETURNING *', [idPaciente, Idvacina, dataAplicacao]);
     return result
@@ -68,6 +49,74 @@ const pesquisaVacinaAplicada = async (idPaciente) => {
     return result
 }
 
+//Consulta em mais de uam Tabela, para retornar dados especificos
+const consultaVacinaPersonalizada = async () => {
+    const result = await pool.query('SELECT * FROM VACINA, PERIODOAPLICACAOMES, PERIODOAPLICACAOANO,REDE');
+    return result.rows;
+}
+
+//Pesquisa na tabela de resgistro de aplicações por ANO
+const mostraPeriodoAplicacaoAno = async () => {
+    const result = await pool.query('SELECT * FROM PERIODOAPLICACAOANO');
+    return result.rows;
+}
+
+//Consulta por Ano Exato
+const consultaIdadePacientesPorAno = async (idade) => {
+    const results = await pool.query(`
+    SELECT VACINA.Vacina, VACINA.Sigla_vacina
+    FROM VACINA
+    JOIN PERIODOAPLICACAOANO ON VACINA.Id_vacina = PERIODOAPLICACAOANO.Id_vacina
+    WHERE ${idade} BETWEEN PERIODOAPLICACAOANO.Qtd_ano_inicial AND PERIODOAPLICACAOANO.Qtd_ano_final;
+  `);
+    
+  return results.rows; 
+};
+
+//Consulta por intervalo em ANO
+const consultaVacinasPorIntervaloDeIdade = async (idadeInicial, idadeanoFinal) => {
+
+    const results = await pool.query(`
+        SELECT VACINA.Vacina, VACINA.Sigla_vacina
+        FROM VACINA
+        JOIN PERIODOAPLICACAOANO ON VACINA.Id_vacina = PERIODOAPLICACAOANO.Id_vacina
+        WHERE ${idadeInicial} BETWEEN PERIODOAPLICACAOANO.Qtd_ano_inicial AND PERIODOAPLICACAOANO.Qtd_ano_final
+        OR ${idadeanoFinal} BETWEEN PERIODOAPLICACAOANO.Qtd_ano_inicial AND PERIODOAPLICACAOANO.Qtd_ano_final
+        OR (PERIODOAPLICACAOANO.Qtd_ano_inicial BETWEEN ${idadeInicial} AND ${idadeanoFinal})
+        OR (PERIODOAPLICACAOANO.Qtd_ano_final BETWEEN ${idadeInicial} AND ${idadeanoFinal});
+    `);
+
+   return results.rows 
+};
+
+//Consulta por intervalo de MÊs
+const consultaVacinasPorIntervaloDeMeses = async (mesInicial, mesFinal) => {
+
+    const results = await pool.query(`
+            SELECT V.Vacina, V.Sigla_vacina
+            FROM VACINA V
+            JOIN PERIODOAPLICACAOMES PM ON V.Id_vacina = PM.Id_vacina
+            WHERE ${mesInicial} BETWEEN PM.Qtd_meses_inicial AND PM.Qtd_meses_final
+            OR ${mesFinal} BETWEEN PM.Qtd_meses_inicial AND PM.Qtd_meses_final
+            OR (PM.Qtd_meses_inicial BETWEEN ${mesInicial} AND ${mesFinal})
+            OR (PM.Qtd_meses_final BETWEEN ${mesInicial} AND ${mesFinal});
+        `);
+
+    return results.rows;
+};
+
+//Consulta por Mês Exato
+const consultaIdadePacientesPorMes = async (mesEspecifico) => {
+    const results = await pool.query(`
+    SELECT VACINA.Vacina, VACINA.Sigla_vacina
+    FROM VACINA
+    JOIN PERIODOAPLICACAOMES ON VACINA.Id_vacina = PERIODOAPLICACAOMES.Id_vacina
+    WHERE ${mesEspecifico} BETWEEN PERIODOAPLICACAOMES.Qtd_meses_inicial AND PERIODOAPLICACAOMES.Qtd_meses_final;
+  `);
+   
+    return results.rows; 
+};
+
 module.exports = {
     cadastrarPaciente,
     atualizarPaciente,
@@ -75,8 +124,13 @@ module.exports = {
     pesquisaPaciente,
     inseriVacinaAplicada,
     excluiVacinaAplicada,
-    pesquisaVacinaAplicada
-
+    pesquisaVacinaAplicada,
+    consultaVacinaPersonalizada,
+    mostraPeriodoAplicacaoAno,
+    consultaIdadePacientesPorAno,
+    consultaVacinasPorIntervaloDeIdade,
+    consultaVacinasPorIntervaloDeMeses,
+    consultaIdadePacientesPorMes
 }
 
 
