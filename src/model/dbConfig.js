@@ -113,7 +113,7 @@ const consultaIdadePacientesPorMes = async (mesEspecifico) => {
     JOIN PERIODOAPLICACAOMES ON VACINA.Id_vacina = PERIODOAPLICACAOMES.Id_vacina
     WHERE ${mesEspecifico} BETWEEN PERIODOAPLICACAOMES.Qtd_meses_inicial AND PERIODOAPLICACAOMES.Qtd_meses_final;
   `);
-   
+
     return results.rows; 
 };
 
