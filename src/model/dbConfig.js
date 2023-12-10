@@ -63,8 +63,8 @@ const excluiVacinaAplicada = async (idPaciente, Idvacina) => {
     return result
 }
 
-const pesquisaVacinaAplicada = async (idPaciente, Idvacina) => {
-    const result = await pool.query('SELECT * FROM VACINAAPLICADA WHERE id_paciente = $1 AND id_vacina = $2 ', [idPaciente, Idvacina]);
+const pesquisaVacinaAplicada = async (idPaciente) => {
+    const result = await pool.query('SELECT * FROM VACINAAPLICADA WHERE id_paciente = $1', [idPaciente]);
     return result
 }
 
