@@ -68,27 +68,6 @@ const pesquisaVacinaAplicada = async (idPaciente) => {
     return result
 }
 
-
-
-
-
-
-excluiVacinaAplicada(1, 3)
-// inseriVacinaAplicada(2, 33, "1999-10-19")
-showVacinaAplicada()
-
-
-// showVacinas()
-// VacinaAplicada()
-
-//cadastrarPaciente("Victor", "1988-6-6")
-//cadastrarIdRede('Rede Maluca')
-//consultaRede()
-
-// consultaPacientes() //Mudar nome da função
-
-//atualizarPaciente(53, 'Victor novo', '09/12/2023')
-
 module.exports = {
     cadastrarPaciente,
     atualizarPaciente,
